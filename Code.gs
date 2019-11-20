@@ -8,5 +8,10 @@ function onOpen() {
 }
 
 function newSheets() {
+  var ss = SpreadsheetApp.getActive();
+  var sheet = ss.getActiveSheet();
+  var data = sheet.getRange(1, 1, sheet.getLastRow(), sheet.getLastColumn()).getDisplayValues();
+  
+  
   
 }
