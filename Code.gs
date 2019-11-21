@@ -18,9 +18,9 @@ function newSheets() {
   if(DriveApp.getFoldersByName("Student Shared Data").hasNext()){
     drive = DriveApp.getFoldersByName("Student Shared Data").next();
   }else{
-    drive = DriveApp.addFolder("Student Shared Data");
+    drive = DriveApp.createFolder("Student Shared Data");
   }
-    
+    //NEED TO QUERY DTA HEADERS TOO FOR ADDITIONAL DATA
 
   for(var i = 0; i< studentData.length; i++){
     var email = studentData[i][0];
@@ -33,8 +33,8 @@ function newSheets() {
     drive.addFile(DriveApp.getFileById(file))
     
     var newSheet = newSS.getActiveSheet();
-    newSS.getRange(1,1).setValue(lName);
-    newSS.getRange(1,2).setValue(fName);
+    newSheet.getRange(1,1).setValue(lName);
+    newSheet.getRange(1,2).setValue(fName);
     var newHeaders = newSheet.getRange(2,1, 1, headers.length);
     newHeaders.setValues([headers]);
     
