@@ -1,3 +1,17 @@
+/**
+TODO:
+  - auto find email column based on "email" header
+  - try/catch on the addviewer portion so the files still get created but not shared (figure out why sometimes it doesnt work)
+      - add a list of student emails that broke it so they can manually be added as viewers
+
+Assumptions:
+  - emails are the first column
+  - 1 row of header data
+  - students have unique firstname lastname pairings
+  - the sheet creator will only be run once
+
+**/
+
 function onOpen() {
   var ui = SpreadsheetApp.getUi();
   ui.createMenu('Student Data Sharing')
