@@ -6,6 +6,8 @@ TODO:
 
 Assumptions:
   - emails are the first column
+  - first name are second
+  - last name are third
   - 1 row of header data
   - students have unique firstname lastname pairings
   - the sheet creator will only be run once
@@ -36,11 +38,11 @@ function newSheets() {
     drive = DriveApp.createFolder("Student Shared Data");
   }
     //NEED TO QUERY DTA HEADERS TOO FOR ADDITIONAL DATA
-
+  var eCol = findEmailCol(sheet);
   for(var i = 0; i< studentData.length; i++){
-    var email = studentData[i][0];
-    var fName = studentData[i][1];
-    var lName = studentData[i][2];
+    var email = studentData[i][eCol];
+    var fName = studentData[i][eCol+1];
+    var lName = studentData[i][eCol+2];
     //var info = studentData[i].slice(3, studentData[i].length); don't use this, make a =Query() function
     var newSS = SpreadsheetApp.create(lName+", "+fName);
     newSS.addViewer(email);
@@ -57,4 +59,24 @@ function newSheets() {
     var query = "=QUERY(IMPORTRANGE(\"https://docs.google.com/spreadsheets/d/"+link+"/edit\",\"data!A1:Z\"), CONCATENATE(\"select * where Col3 = '\",A1, \"' AND Col2 = '\", B1, \"'\"), -1)";
     cell.setValue(query);
   }
+}
+
+
+function findEmailCol(sheet){
+ var col = null;
+ var row = null;
+
+ var fullData = sheet.getRange(1, 1, sheet.getLastRow(), sheet.getLastColumn()).getDisplayValues();
+  for(var i = 0; i < fullData.length; i++){
+    for(var j = 0; j < fullData[i].length; j++){
+      if(fullData[i][j] == "email" || fullData[i][j] == "Email" || fullData[i][j] == "EMAIL"){
+        col = j;
+        row = i; //eventually use this to determine where the headers end maybe??
+        break;
+      }
+    }
+  }
+  
+ return col;
+  
 }
