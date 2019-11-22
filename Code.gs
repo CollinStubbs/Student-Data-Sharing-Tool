@@ -1,8 +1,11 @@
 /**
 TODO:
   - figure out a way to do headers with multiple rows
+      - "MCR3U-1" is on a divider row from headers to data
       - two query's? 
+      - just first row is headers to be copied over
   - set starting data row as variable
+  - three classes in a row vertically - if empty email cell, skip ahead
   
 Assumptions:
   - emails are the first column
@@ -28,6 +31,7 @@ function newSheets() {
   var sheet = ss.getActiveSheet();
   var data = sheet.getRange(1, 1, sheet.getLastRow(), sheet.getLastColumn()).getDisplayValues();
   var link = ss.getId();
+  //var startpoint = 
   
   //var headers = data[0];
   var studentData = data.slice(1, data.length)//0 - email, 1 - fnam, 2 - lname, the rest is data
@@ -42,8 +46,8 @@ function newSheets() {
   var errorRow = 1;
   for(var i = 0; i< studentData.length; i++){
     var email = studentData[i][eCol];
-    var fName = studentData[i][eCol+1];
-    var lName = studentData[i][eCol+2];
+    var fName = studentData[i][eCol+2];
+    var lName = studentData[i][eCol+1];
     //var info = studentData[i].slice(3, studentData[i].length); don't use this, make a =Query() function
     var newSS = SpreadsheetApp.create(lName+", "+fName);
     try{
@@ -78,7 +82,7 @@ function newSheets() {
 //    newHeaders.setValues([headers]);
     
     var cell = newSheet.getRange(2, 1);
-    var query = "=QUERY(IMPORTRANGE(\"https://docs.google.com/spreadsheets/d/"+link+"/edit\",\"data!A1:Z\"), CONCATENATE(\"select * where Col3 = '\",A1, \"' AND Col2 = '\", B1, \"'\"), -1)";
+    var query = "=QUERY(IMPORTRANGE(\"https://docs.google.com/spreadsheets/d/"+link+"/edit\",\"data!A1:Z\"), CONCATENATE(\"select * where Col3 = '\",B1, \"' AND Col2 = '\", A1, \"'\"), -1)";
     cell.setValue(query);
   }
 }
