@@ -1,8 +1,8 @@
 /**
 TODO:
   - figure out a way to do headers with multiple rows
-      - "MCR3U-1" is on a divider row from headers to data
-      - two query's? 
+      - "MCR3U-1" is on a divider row from headers to data, first col has somethings, the rest of the row is empty
+      - two queries? 
       - just first row is headers to be copied over
   - set starting data row as variable
   - three classes in a row vertically - if empty email cell, skip ahead
@@ -48,42 +48,45 @@ function newSheets() {
     var email = studentData[i][eCol];
     var fName = studentData[i][eCol+2];
     var lName = studentData[i][eCol+1];
-    //var info = studentData[i].slice(3, studentData[i].length); don't use this, make a =Query() function
-    var newSS = SpreadsheetApp.create(lName+", "+fName);
-    try{
-      newSS.addViewer(email);
-    }
-    catch(e){
-      var check = 0
-      var errorSheet;
-      var temp = ss.getSheets();
-      for(var k = 0; k<temp.length; k++){
-        if(temp[k].getName() == "Error Emails"){
-          check = 1;
-        }
-      }
-      if(check == 0){
-        errorSheet = ss.insertSheet("Error Emails");
-      }
-      else{
-        errorSheet = ss.getSheetByName("Error Emails");
-      }
+    if(email != "" && fName != "" && lName != ""){
       
-      errorSheet.getRange(errorRow, 1).setValue(email);
-      errorSheet.getRange(errorRow, 2).setValue(e);
+      //var info = studentData[i].slice(3, studentData[i].length); don't use this, make a =Query() function
+      var newSS = SpreadsheetApp.create(lName+", "+fName);
+      try{
+        newSS.addViewer(email);
+      }
+      catch(e){
+        var check = 0
+        var errorSheet;
+        var temp = ss.getSheets();
+        for(var k = 0; k<temp.length; k++){
+          if(temp[k].getName() == "Error Emails"){
+            check = 1;
+          }
+        }
+        if(check == 0){
+          errorSheet = ss.insertSheet("Error Emails");
+        }
+        else{
+          errorSheet = ss.getSheetByName("Error Emails");
+        }
+        
+        errorSheet.getRange(errorRow, 1).setValue(email);
+        errorSheet.getRange(errorRow, 2).setValue(e);
+      }
+      file = newSS.getId();
+      drive.addFile(DriveApp.getFileById(file))
+      
+      var newSheet = newSS.getActiveSheet();
+      newSheet.getRange(1,1).setValue(lName);
+      newSheet.getRange(1,2).setValue(fName);
+      //    var newHeaders = newSheet.getRange(2,1, 1, headers.length);
+      //    newHeaders.setValues([headers]);
+      
+      var cell = newSheet.getRange(2, 1);
+      var query = "=QUERY(IMPORTRANGE(\"https://docs.google.com/spreadsheets/d/"+link+"/edit\",\"data!A1:Z\"), CONCATENATE(\"select * where Col3 = '\",B1, \"' AND Col2 = '\", A1, \"'\"), -1)";
+      cell.setValue(query);
     }
-    file = newSS.getId();
-    drive.addFile(DriveApp.getFileById(file))
-    
-    var newSheet = newSS.getActiveSheet();
-    newSheet.getRange(1,1).setValue(lName);
-    newSheet.getRange(1,2).setValue(fName);
-//    var newHeaders = newSheet.getRange(2,1, 1, headers.length);
-//    newHeaders.setValues([headers]);
-    
-    var cell = newSheet.getRange(2, 1);
-    var query = "=QUERY(IMPORTRANGE(\"https://docs.google.com/spreadsheets/d/"+link+"/edit\",\"data!A1:Z\"), CONCATENATE(\"select * where Col3 = '\",B1, \"' AND Col2 = '\", A1, \"'\"), -1)";
-    cell.setValue(query);
   }
 }
 
